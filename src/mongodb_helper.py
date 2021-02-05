@@ -50,7 +50,7 @@ class MongodbHelper:
                 result = await collection.bulk_write(requests=requests)
                 logging.info(f'DoBulkUpsert, '
                              f'col({col}), total({len(data)}), '
-                             f'modified({result.modified_count}), upsert({result.upsert_count})')
+                             f'modified({result.modified_count}), upsert({result.upserted_count})')
                 return result
             else:
                 logging.info(f'DoBulkUpsert, '

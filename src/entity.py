@@ -81,6 +81,7 @@ class TgGroupStatusEntity(BaseEntity, ):
         self.create_time = create_time
         self.update_time = update_time
 
+
 class TgMsgEntity(BaseEntity, ):
 
     TABLE = 'tg_msg'

@@ -5,6 +5,7 @@ ACCOUNT_STATUS_DEFAULT = 0
 GROUP_STATUS_DEFAULT = 0
 FIle_TYPE_DEFAULT = 0
 
+
 class BaseEntity:
 
     def to_dict(self):

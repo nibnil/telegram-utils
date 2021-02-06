@@ -23,16 +23,17 @@ def get_config():
         short_opts = 'hv'
         long_opts = ['help', 'version']
         config_path = find_config()
+        print(config_path)
         optlist, args = getopt(sys.argv[1:], short_opts, long_opts)
         config = dict()
         for key, value in optlist:
             if key == '-c':
                 config_path = value
-            if config_path:
-                with open(config_path, 'r') as fd:
-                    config = json.load(fd)
-            else:
-                config = dict()
+        if config_path:
+            with open(config_path, 'r') as fd:
+                config = json.load(fd)
+        else:
+            config = dict()
         return config
     except Exception as ex:
         logging.exception(ex)

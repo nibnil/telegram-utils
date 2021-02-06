@@ -9,17 +9,14 @@ from src.mongodb_helper import MongodbHelper
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 
-API_ID = 1394345
-API_HASH = 'd4c1615831f01e0342c35e829e1a0b76'
-proxy = {'proxy_type': PROXY_TYPE_SOCKS5,
-         'addr': '127.0.0.1',
-         'port': 51115}
 
-
-async def get_tg_token(aio_loop, phone_number, url, db):
+async def get_tg_token(aio_loop, phone_number, url, db, config):
     mongodb = MongodbHelper(url=url, db=db)
+    api_id = config.get('API_ID')
+    api_hash = config.get('API_HASH')
+    proxy = config.get('PROXY')
     client = TelegramClient(phone_number,
-                            API_ID, API_HASH, loop=aio_loop, proxy=proxy)
+                            api_id, api_hash, loop=aio_loop, proxy=proxy)
     try:
         await client.connect()
     except Exception as ex:
@@ -31,11 +28,11 @@ async def get_tg_token(aio_loop, phone_number, url, db):
     me = await client.sign_in(code=value)
     account_id = str(me.id)
     username = me.username
-    target = me.phone
+    phone_number = me.phone
     token = StringSession.save(client.session)
     tg_account = TgAccountEntity(account_id=account_id,
                                  domain=DOMAIN_DEFAULT,
-                                 target=target,
+                                 phone_number=phone_number,
                                  username=username,
                                  token=token,
                                  account_status=ACCOUNT_STATUS_DEFAULT,
@@ -53,7 +50,7 @@ async def get_tg_token(aio_loop, phone_number, url, db):
 def get_token(phone_number, url='mongodb://127.0.0.1:27017', db='telegram-data', config: dict = None):
     aio_loop = asyncio.get_event_loop()
     try:
-        aio_loop.run_until_complete(get_tg_token(aio_loop, phone_number, url, db))
+        aio_loop.run_until_complete(get_tg_token(aio_loop, phone_number, url, db, config))
     finally:
         if not aio_loop.is_closed():
             aio_loop.close()

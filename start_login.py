@@ -15,5 +15,6 @@ if __name__ == '__main__':
     phone_number = config.get('PHONE_NUMBER')
     url = config.get('MONGODB_URL')
     db = config.get('MONGODB_DB')
+    print(url, db)
     get_token(phone_number=phone_number, url=url, db=db, config=config)
     save_config(config)

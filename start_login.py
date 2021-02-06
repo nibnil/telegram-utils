@@ -1,5 +1,6 @@
 import logging
 
+from shell.config import get_config, save_config
 from shell.shell_account import get_token
 
 
@@ -10,5 +11,9 @@ if __name__ == '__main__':
                         format='%(levelname)-s - %(asctime)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S',
                         handlers=[file_handler, stream_handler])
-
-    get_token(phone_number='8616533915575', url='mongodb://192.168.31.22:27017')
+    config = get_config()
+    phone_number = config.get('PHONE_NUMBER')
+    url = config.get('MONGODB_URL')
+    db = config.get('MONGODB_DB')
+    get_token(phone_number=phone_number, url=url, db=db, config=config)
+    save_config(config)

@@ -1,9 +1,24 @@
 from datetime import datetime
 
+# domain
 DOMAIN_DEFAULT = 0
+
+# account status
 ACCOUNT_STATUS_DEFAULT = 0
+
+# group status
 GROUP_STATUS_DEFAULT = 0
-FIle_TYPE_DEFAULT = 0
+GROUP_STATUS_WATCH = 1
+
+# file type
+FILE_TYPE_DEFAULT = 0
+FILE_TYPE_PHOTO = 1
+FILE_TYPE_VIDEO = 2
+FILE_TYPE_WEB = 3
+
+# mime type
+MIME_TYPE_VIDEO = ['video/mp4']
+MIME_TYPE_IMAGE = ['image/webp']
 
 
 class BaseEntity:
@@ -26,7 +41,7 @@ class TgAccountEntity(BaseEntity, ):
     def __init__(self,
                  account_id: str = None,
                  domain: int = DOMAIN_DEFAULT,
-                 target: str = None,
+                 phone_number: str = None,
                  username: str = None,
                  token: str = None,
                  account_status: int = ACCOUNT_STATUS_DEFAULT,
@@ -34,7 +49,7 @@ class TgAccountEntity(BaseEntity, ):
                  update_time: datetime = None):
         self.account_id = account_id
         self.domain = domain
-        self.target = target
+        self.phone_number = phone_number
         self.username = username
         self.token = token
         self.account_status = account_status
@@ -70,7 +85,7 @@ class TgGroupStatusEntity(BaseEntity, ):
                  group_status: int = GROUP_STATUS_DEFAULT,
                  last_datetime: datetime = None,
                  last_msg_id: int = None,
-                 last_archived_id: int = None,
+                 last_archived_id: int = 0,
                  create_time: datetime = None,
                  update_time: datetime = None):
         self.group_id = group_id
@@ -91,9 +106,9 @@ class TgMsgEntity(BaseEntity, ):
                  msg_id: int = None,
                  from_id: str = None,
                  to_id: str = None,
-                 file_type: int = FIle_TYPE_DEFAULT,
+                 file_type: int = FILE_TYPE_DEFAULT,
                  content: str = None,
-                 file_name: str = None,
+                 filename: str = None,
                  file_path: str = None,
                  msg_datetime: datetime = None,
                  create_time: datetime = None,
@@ -104,7 +119,7 @@ class TgMsgEntity(BaseEntity, ):
         self.to_id = to_id
         self.file_type = file_type
         self.content = content
-        self.file_name = file_name
+        self.filename = filename
         self.file_path = file_path
         self.msg_datetime = msg_datetime
         self.create_time = create_time

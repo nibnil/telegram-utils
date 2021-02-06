@@ -44,13 +44,13 @@ async def get_tg_token(aio_loop, phone_number, url, db):
     data = [tg_account.to_dict()]
     await mongodb.do_bulk_upsert(col=TgAccountEntity.TABLE,
                                  data=data,
-                                 filter_key=['account_id', 'target', 'domain', ],
-                                 set_key=['domain', 'target', 'username', 'token', 'account_status', 'update_time'],
+                                 filter_key=['account_id', 'phone_number', 'domain', ],
+                                 set_key=['domain', 'phone_number', 'username', 'token', 'account_status', 'update_time'],
                                  set_on_insert_key=['account_id', 'create_time'])
     await client.disconnect()
 
 
-def get_token(phone_number, url='mongodb://127.0.0.1:27017', db='telegram-data'):
+def get_token(phone_number, url='mongodb://127.0.0.1:27017', db='telegram-data', config: dict = None):
     aio_loop = asyncio.get_event_loop()
     try:
         aio_loop.run_until_complete(get_tg_token(aio_loop, phone_number, url, db))

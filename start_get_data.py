@@ -3,6 +3,7 @@ import logging
 from socks import PROXY_TYPE_SOCKS5
 
 from shell.config import get_config, save_config
+from shell.get_data import get_data
 
 if __name__ == '__main__':
     file_handler = logging.FileHandler('get_data.log')
@@ -23,5 +24,6 @@ if __name__ == '__main__':
     config.update({'INTERVAL': 5})
     config.update({'FILE_PATH': r'E:\nibnil'})
     config.update({'MSG_LIMIT': 100})
-    get_data()
+    # get_data(config)
     save_config(config)
+

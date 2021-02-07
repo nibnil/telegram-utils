@@ -11,14 +11,20 @@ from telethon.errors import FloodWaitError, BadRequestError
 from telethon.sessions import StringSession
 from telethon.tl.types import Channel, PeerChannel, MessageMediaPhoto, MessageMediaDocument, MessageMediaWebPage
 
+tick = 0
+
 
 async def msg_handler(event):
     pass
 
 
 def callback(current, total):
-    print('Downloaded', current, 'out of', total,
-          'bytes: {:.2%}'.format(current / total))
+    global tick
+    tick += 1
+    if tick % 10 == 0:
+        tick = 0
+        print('Downloaded', current, 'out of', total,
+              'bytes: {:.2%}'.format(current / total))
 
 
 async def download_media(msg, abs_file_path):
@@ -41,8 +47,8 @@ async def update_groups(client, mongodb):
             group_name = dialog.entity.title
             username = dialog.entity.username
             group_create_time = dialog.entity.date
-            create_time = datetime.now()
-            update_time = datetime.now()
+            create_time = datetime.utcnow()
+            update_time = datetime.utcnow()
             tg_group = TgGroupEntity(group_id=group_id,
                                      group_name=group_name,
                                      username=username,
@@ -71,7 +77,7 @@ async def update_groups(client, mongodb):
                                               data=tg_groups_status,
                                               filter_key=['group_id'],
                                               set_key=['last_datetime', 'last_msg_id', 'update_time'],
-                                              set_on_insert_key=['create_time', 'last_archive_id', 'group_status'])
+                                              set_on_insert_key=['create_time', 'last_archived_id', 'group_status'])
 
 
 async def update_msgs(client, mongodb, file_path, limit=100):
@@ -123,6 +129,7 @@ async def update_msgs(client, mongodb, file_path, limit=100):
                         filename = f'{msg_id}.jpg'
                         rel_file_path = os.path.join(group_id, filename)
                         abs_file_path = os.path.join(abs_dir_path, filename)
+                        await download_media(msg=msg, abs_file_path=abs_file_path)
                     else:
                         logging.info(f'UpdateMsgs, unresolved mime type({mime_type})')
                 elif isinstance(media, MessageMediaWebPage):
@@ -158,7 +165,7 @@ async def update_msgs(client, mongodb, file_path, limit=100):
 
         await mongodb.do_bulk_upsert(col=TgGroupStatusEntity.TABLE,
                                      data=[{'_id': doc.get('_id'),
-                                            'last_archive_id': msg_id,
+                                            'last_archived_id': msg_id,
                                             'update_time': datetime.utcnow()}],
                                      filter_key=['_id'],
                                      set_key=['last_archived_id', 'update_time'])
@@ -192,8 +199,9 @@ async def get_tg_data(aio_loop, url, db, config):
     try:
         interval = config.get('INTERVAL')
         msg_limit = config.get('MSG_LIMIT')
+        file_path = config.get('FILE_PATH')
         while True:
-            res = await update_msgs(client=client, mongodb=mongodb, limit=msg_limit)
+            res = await update_msgs(client=client, mongodb=mongodb, file_path=file_path, limit=msg_limit)
             print(res)
             await asyncio.sleep(interval)
     except KeyboardInterrupt:
@@ -206,8 +214,8 @@ async def get_tg_data(aio_loop, url, db, config):
 def get_data(config):
     aio_loop = asyncio.get_event_loop()
     try:
-        url = config.get('mongodb_url')
-        db = config.get('mongodb_db')
+        url = config.get('MONGODB_URL')
+        db = config.get('MONGODB_DB')
         aio_loop.run_until_complete(get_tg_data(aio_loop, url=url, db=db, config=config))
     finally:
         if not aio_loop.is_closed():

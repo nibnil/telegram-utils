@@ -36,8 +36,8 @@ async def get_tg_token(aio_loop, phone_number, url, db, config):
                                  username=username,
                                  token=token,
                                  account_status=ACCOUNT_STATUS_DEFAULT,
-                                 create_time=datetime.now(),
-                                 update_time=datetime.now())
+                                 create_time=datetime.utcnow(),
+                                 update_time=datetime.utcnow())
     data = [tg_account.to_dict()]
     await mongodb.do_bulk_upsert(col=TgAccountEntity.TABLE,
                                  data=data,

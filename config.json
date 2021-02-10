@@ -1,0 +1,15 @@
+{
+    "API_ID": 1234567,
+    "API_HASH": "abcdef5831f01e0342c3999999456123",
+    "PROXY": {
+        "proxy_type": 2,
+        "addr": "127.0.0.1",
+        "port": 51115
+    },
+    "MONGODB_URL": "mongodb://192.168.31.22:27017",
+    "MONGODB_DB": "telegram-data",
+    "PHONE_NUMBER": "8613906456",
+    "INTERVAL": 5,
+    "FILE_PATH": "E:\\nibnil\\mirage\\20210207",
+    "MSG_LIMIT": 5
+}
